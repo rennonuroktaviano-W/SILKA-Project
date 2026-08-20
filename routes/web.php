@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
 
     Route::get('/target-capaians/pdf', [TargetCapaianController::class, 'pdf'])->name('target-capaians.pdf');
+    Route::get('/target-capaians/export', [TargetCapaianController::class, 'export'])->name('target-capaians.export');
 
     Route::resource('users', UserController::class)->except(['show'])->middleware('can:manage-users');
 });

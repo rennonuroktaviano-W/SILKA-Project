@@ -32,6 +32,11 @@
         $persenKeseluruhan = $totalTarget > 0 ? round(($totalRealisasi / $totalTarget) * 100) : 0;
         $tahunPertama = $targets->min('tahun');
         $tahunTerakhir = $targets->max('tahun');
+
+        $maxTahun = $targets->max(function ($t) use ($realisasiByTahun) {
+            return max((float) $t->target_capaian, (float) ($realisasiByTahun[$t->tahun] ?? 0));
+        });
+        $maxTahun = $maxTahun > 0 ? $maxTahun : 1;
     @endphp
 
     <div class="chips">
@@ -76,6 +81,36 @@
                 </td>
             </tr>
         </table>
+
+        @if ($targets->count() > 1)
+            <div class="chart-wrap">
+                <div class="chart-title">Grafik Target vs Realisasi per Tahun</div>
+                <div class="chart-legend">
+                    <span class="legend-dot" style="background:#0f172a"></span> Target
+                    <span class="legend-dot" style="background:#10b981;margin-left:12px"></span> Realisasi
+                </div>
+                <table class="chart-bars">
+                    <tr>
+                        @foreach ($targets->sortBy('tahun') as $target)
+                            @php
+                                $realisasi = (float) ($realisasiByTahun[$target->tahun] ?? 0);
+                                $targetPct = max(2, round((float) $target->target_capaian / $maxTahun * 100, 1));
+                                $realisasiPct = max(2, round($realisasi / $maxTahun * 100, 1));
+                            @endphp
+                            <td class="chart-col">
+                                <div class="chart-bars-area">
+                                    <div class="bar-pair">
+                                        <span class="bar target" style="height:{{ $targetPct }}%"></span>
+                                        <span class="bar masuk" style="height:{{ $realisasiPct }}%"></span>
+                                    </div>
+                                </div>
+                                <div class="bar-label">{{ $target->tahun }}</div>
+                            </td>
+                        @endforeach
+                    </tr>
+                </table>
+            </div>
+        @endif
 
         <div class="sec-title"><span class="sec-line"></span>Rincian Target per Tahun</div>
 

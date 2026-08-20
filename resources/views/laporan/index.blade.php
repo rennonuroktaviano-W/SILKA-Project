@@ -65,7 +65,7 @@
                     <a href="{{ route('laporan.pdf', request()->query()) }}" class="btn btn-primary btn-sm">
                         @include('partials.icon', ['name' => 'download', 'size' => 14]) Cetak PDF
                     </a>
-                    <a href="{{ route('laporan.export', request()->query()) }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('laporan.export', request()->query()) }}" class="btn btn-primary btn-sm">
                         @include('partials.icon', ['name' => 'download', 'size' => 14]) Export Excel
                     </a>
                 </span>
@@ -117,6 +117,20 @@
             </div>
         </div>
 
+        @if ($chart && count($chart['labels']) > 0)
+            <div class="card">
+                <div class="card-header">
+                    <span>@include('partials.icon', ['name' => 'chart', 'size' => 16]) Grafik Arus Kas per Bulan</span>
+                    <span class="badge badge-neutral">{{ count($chart['labels']) }} bulan</span>
+                </div>
+                <div class="card-body">
+                    <div style="position:relative;height:320px">
+                        <canvas id="chartArusKas"></canvas>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="stat-grid">
             <div class="stat-card" style="--tile-grad:linear-gradient(135deg,#10b981,#059669)">
                 <div class="stat-top">
@@ -157,3 +171,74 @@
         </div>
     @endif
 @endsection
+
+@push('scripts')
+    @if ($chart && count($chart['labels']) > 0)
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <script>
+            (function () {
+                var ctx = document.getElementById('chartArusKas');
+                if (!ctx) return;
+
+                var labels = @json($chart['labels']);
+                var pemasukan = @json($chart['pemasukan']);
+                var pengeluaran = @json($chart['pengeluaran']);
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Pemasukan',
+                                data: pemasukan,
+                                backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                                borderColor: '#059669',
+                                borderWidth: 1,
+                                borderRadius: 6,
+                                maxBarThickness: 36
+                            },
+                            {
+                                label: 'Pengeluaran',
+                                data: pengeluaran,
+                                backgroundColor: 'rgba(244, 63, 94, 0.85)',
+                                borderColor: '#e11d48',
+                                borderWidth: 1,
+                                borderRadius: 6,
+                                maxBarThickness: 36
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return ' ' + context.dataset.label + ': Rp ' + Number(context.parsed.y).toLocaleString('id-ID');
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        if (value >= 1000000000) return (value / 1000000000).toFixed(1) + ' M';
+                                        if (value >= 1000000) return (value / 1000000).toFixed(0) + ' Jt';
+                                        if (value >= 1000) return (value / 1000).toFixed(0) + ' Rb';
+                                        return value;
+                                    }
+                                }
+                            },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            })();
+        </script>
+    @endif
+@endpush

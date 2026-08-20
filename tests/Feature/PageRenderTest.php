@@ -203,7 +203,7 @@ class PageRenderTest extends TestCase
     }
 
     /** @test */
-    public function halaman_pdf_laporan_dan_target_dapat_diunduh()
+    public function halaman_pdf_dan_export_laporan_dan_target_dapat_diunduh()
     {
         foreach ([$this->admin, $this->bendahara] as $user) {
             $this->actingAs($user)
@@ -212,9 +212,19 @@ class PageRenderTest extends TestCase
                 ->assertHeader('Content-Type', 'application/pdf');
 
             $this->actingAs($user)
+                ->get(route('laporan.export'))
+                ->assertOk()
+                ->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+            $this->actingAs($user)
                 ->get(route('target-capaians.pdf'))
                 ->assertOk()
                 ->assertHeader('Content-Type', 'application/pdf');
+
+            $this->actingAs($user)
+                ->get(route('target-capaians.export'))
+                ->assertOk()
+                ->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         }
     }
 }

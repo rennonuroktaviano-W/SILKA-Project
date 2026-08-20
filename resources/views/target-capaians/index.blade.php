@@ -13,6 +13,9 @@
             <a href="{{ route('target-capaians.pdf') }}" class="btn btn-primary">
                 @include('partials.icon', ['name' => 'download', 'size' => 16]) Cetak PDF
             </a>
+            <a href="{{ route('target-capaians.export') }}" class="btn btn-primary">
+                @include('partials.icon', ['name' => 'download', 'size' => 16]) Export Excel
+            </a>
             <a href="{{ route('target-capaians.create') }}" class="btn btn-primary">
                 @include('partials.icon', ['name' => 'plus', 'size' => 16]) Tambah Target
             </a>

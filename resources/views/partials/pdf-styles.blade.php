@@ -200,6 +200,73 @@ table.data tr.total td {
 }
 .progress.warn > div { background: #f59e0b; }
 
+/* ---------- Chart (CSS bar) ---------- */
+.chart-wrap {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 14px 8px;
+    margin-bottom: 16px;
+    background: #ffffff;
+}
+.chart-title {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #334155;
+    margin-bottom: 4px;
+}
+.chart-legend {
+    font-size: 8px;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+.legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+.chart-bars {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+.chart-col {
+    display: table-cell;
+    text-align: center;
+    vertical-align: bottom;
+    padding: 0 4px;
+}
+.chart-bars-area {
+    position: relative;
+    height: 130px;
+}
+.bar-pair {
+    display: inline-block;
+    vertical-align: bottom;
+    height: 130px;
+}
+.bar {
+    display: inline-block;
+    width: 15px;
+    vertical-align: bottom;
+    border-radius: 3px 3px 0 0;
+}
+.bar.masuk { background: #10b981; margin-right: 3px; }
+.bar.keluar { background: #f43f5e; }
+.bar.target { background: #0f172a; margin-right: 3px; }
+.bar-label {
+    font-size: 7.5px;
+    color: #475569;
+    margin-top: 4px;
+    text-align: center;
+    white-space: nowrap;
+}
+
 /* ---------- Signature ---------- */
 table.sig {
     width: 100%;

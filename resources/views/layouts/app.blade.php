@@ -53,7 +53,12 @@
                         ->filter()->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
                 @endphp
                 <div class="side-footer-user">
-                    <div class="avatar" style="width:34px;height:34px;font-size:12px">{{ $initials }}</div>
+                    @if (auth()->user()->foto)
+                        <img src="{{ auth()->user()->foto_url }}" alt="Foto {{ auth()->user()->name }}"
+                             style="width:34px;height:34px;object-fit:cover;border-radius:50%">
+                    @else
+                        <div class="avatar" style="width:34px;height:34px;font-size:12px">{{ $initials }}</div>
+                    @endif
                     <div>
                         <div class="user-name">{{ auth()->user()->name }}</div>
                         <small>{{ auth()->user()->isAdmin() ? 'Administrator' : 'Bendahara' }}</small>
@@ -79,7 +84,12 @@
                     <h1>@yield('title', 'Dashboard')</h1>
                 </div>
                 <div class="topbar-user">
-                    <div class="avatar">{{ $initials }}</div>
+                    @if (auth()->user()->foto)
+                        <img src="{{ auth()->user()->foto_url }}" alt="Foto {{ auth()->user()->name }}"
+                             style="width:34px;height:34px;object-fit:cover;border-radius:50%">
+                    @else
+                        <div class="avatar">{{ $initials }}</div>
+                    @endif
                     <span class="user-name">{{ auth()->user()->name }}</span>
                     <button type="button" class="logout-btn" data-logout>
                         @include('partials.icon', ['name' => 'logout', 'size' => 15]) Logout

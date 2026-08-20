@@ -57,4 +57,32 @@ class ReportService
     {
         return Kategori::orderBy('kategori')->get();
     }
+
+    /**
+     * Tren pemasukan/pengeluaran per bulan dalam rentang filter.
+     * Digunakan untuk grafik laporan web dan PDF.
+     */
+    public function trendMonthly(array $filters = [])
+    {
+        $query = DB::table('transaksi')
+            ->when(($filters['kategori_id'] ?? null), function ($q) use ($filters) {
+                return $q->where('kategori_id', $filters['kategori_id']);
+            })
+            ->when(($filters['jenis'] ?? null), function ($q) use ($filters) {
+                return $q->where('jenis', $filters['jenis']);
+            })
+            ->when(($filters['tanggal_awal'] ?? null), function ($q) use ($filters) {
+                return $q->where('tanggal', '>=', $filters['tanggal_awal']);
+            })
+            ->when(($filters['tanggal_akhir'] ?? null), function ($q) use ($filters) {
+                return $q->where('tanggal', '<=', $filters['tanggal_akhir']);
+            })
+            ->selectRaw("DATE_FORMAT(tanggal, '%Y-%m') AS bulan")
+            ->selectRaw("SUM(CASE WHEN jenis = 'pemasukan' THEN nominal ELSE 0 END) AS pemasukan")
+            ->selectRaw("SUM(CASE WHEN jenis = 'pengeluaran' THEN nominal ELSE 0 END) AS pengeluaran")
+            ->groupBy('bulan')
+            ->orderBy('bulan');
+
+        return $query->get();
+    }
 }

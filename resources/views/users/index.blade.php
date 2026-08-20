@@ -33,9 +33,14 @@
                         @forelse ($users as $user)
                             <tr>
                                 <td>
-                                    <span class="avatar">
-                                        @include('partials.icon', ['name' => 'user', 'size' => 18])
-                                    </span>
+                                    @if ($user->foto)
+                                        <img src="{{ $user->foto_url }}" alt="Foto {{ $user->name }}"
+                                             style="width:42px;height:42px;object-fit:cover;border-radius:50%;border:2px solid var(--border)">
+                                    @else
+                                        <span class="avatar">
+                                            @include('partials.icon', ['name' => 'user', 'size' => 18])
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="cell-main">{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>

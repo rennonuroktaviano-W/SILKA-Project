@@ -72,6 +72,31 @@
             </tr>
         </table>
 
+        @if ($chart && count($chart['items']) > 1)
+            <div class="chart-wrap">
+                <div class="chart-title">Grafik Arus Kas per Bulan</div>
+                <div class="chart-legend">
+                    <span class="legend-dot" style="background:#10b981"></span> Pemasukan
+                    <span class="legend-dot" style="background:#f43f5e;margin-left:12px"></span> Pengeluaran
+                </div>
+                <table class="chart-bars">
+                    <tr>
+                        @foreach ($chart['items'] as $item)
+                            <td class="chart-col">
+                                <div class="chart-bars-area">
+                                    <div class="bar-pair">
+                                        <span class="bar masuk" style="height:{{ $item['pemasukanPct'] }}%"></span>
+                                        <span class="bar keluar" style="height:{{ $item['pengeluaranPct'] }}%"></span>
+                                    </div>
+                                </div>
+                                <div class="bar-label">{{ $item['label'] }}</div>
+                            </td>
+                        @endforeach
+                    </tr>
+                </table>
+            </div>
+        @endif
+
         <div class="sec-title"><span class="sec-line"></span>Rincian Transaksi</div>
 
         <table class="data">
