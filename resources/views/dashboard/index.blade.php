@@ -195,16 +195,10 @@
                 $bulanNama = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
             @endphp
             <div class="section-title" style="margin-top:26px">
-                @include('partials.icon', ['name' => 'laporan', 'size' => 16]) Tren Pemasukan & Pengeluaran {{ $year }}
+                @include('partials.icon', ['name' => 'chart', 'size' => 16]) Grafik Tren Pemasukan & Pengeluaran {{ $year }}
             </div>
-            <div class="mini-bars">
-                @for ($i = 1; $i <= 12; $i++)
-                    <div class="bar-wrap reveal" style="--d: {{ ($i - 1) * 0.03 }}s">
-                        <div class="bar inc" style="height: {{ $maxTren > 0 ? round($bulanTren[$i]['masuk'] / $maxTren * 100) : 0 }}%"></div>
-                        <div class="bar exp" style="height: {{ $maxTren > 0 ? round($bulanTren[$i]['keluar'] / $maxTren * 100) : 0 }}%"></div>
-                        <span class="bar-label">{{ $bulanNama[$i - 1] }}</span>
-                    </div>
-                @endfor
+            <div style="position:relative;height:300px;margin-top:12px">
+                <canvas id="chartTrenKeuangan" aria-label="Grafik tren pemasukan dan pengeluaran"></canvas>
             </div>
         </div>
     </div>
@@ -278,6 +272,7 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/chart.umd.min.js') }}"></script>
     <script>
         (function () {
             var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -408,6 +403,85 @@
                 if (closeBtn) {
                     closeBtn.addEventListener('click', function () { notice.remove(); });
                 }
+            }
+
+            // Grafik tren keuangan (Komposisi Keuangan)
+            var chartCtx = document.getElementById('chartTrenKeuangan');
+            if (chartCtx && typeof Chart !== 'undefined') {
+                var labels = @json($bulanNama);
+                var masuk = @json(collect($bulanTren)->pluck('masuk')->map(fn ($v) => (float) $v)->values()->all());
+                var keluar = @json(collect($bulanTren)->pluck('keluar')->map(fn ($v) => (float) $v)->values()->all());
+
+                var gradMasuk = chartCtx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+                gradMasuk.addColorStop(0, 'rgba(16, 185, 129, 0.30)');
+                gradMasuk.addColorStop(1, 'rgba(16, 185, 129, 0.02)');
+
+                var gradKeluar = chartCtx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+                gradKeluar.addColorStop(0, 'rgba(244, 63, 94, 0.30)');
+                gradKeluar.addColorStop(1, 'rgba(244, 63, 94, 0.02)');
+
+                new Chart(chartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Pemasukan',
+                                data: masuk,
+                                borderColor: '#10b981',
+                                backgroundColor: gradMasuk,
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 2.5,
+                                pointRadius: 3,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#10b981'
+                            },
+                            {
+                                label: 'Pengeluaran',
+                                data: keluar,
+                                borderColor: '#f43f5e',
+                                backgroundColor: gradKeluar,
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 2.5,
+                                pointRadius: 3,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#f43f5e'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { position: 'top', labels: { usePointStyle: true, padding: 18 } },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return ' ' + context.dataset.label + ': Rp ' + Number(context.parsed.y).toLocaleString('id-ID');
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(148, 163, 184, 0.15)' },
+                                ticks: {
+                                    callback: function (value) {
+                                        if (value >= 1000000000) return (value / 1000000000).toFixed(1) + ' M';
+                                        if (value >= 1000000) return (value / 1000000).toFixed(0) + ' Jt';
+                                        if (value >= 1000) return (value / 1000).toFixed(0) + ' Rb';
+                                        return value;
+                                    }
+                                }
+                            },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
             }
         })();
     </script>
