@@ -5,28 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Login - {{ config('app.name') }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
     <div class="login-wrap">
         <div class="login-card">
             <div class="login-brand">
-                <span class="brand-mark" style="width:46px;height:46px;border-radius:14px">@include('partials.icon', ['name' => 'wallet', 'size' => 24])</span>
+                <span class="login-brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </span>
             </div>
-            <h1>Selamat Datang!</h1>
-            <p class="login-subtitle">Masuk untuk mengelola keuangan SILKA</p>
+            <h1>SILKA Keuangan</h1>
+            <p class="login-subtitle">Masuk ke sistem keuangan</p>
 
             @if ($errors->any())
                 <div class="alert alert-danger" role="alert">
-                    @include('partials.icon', ['name' => 'x', 'size' => 18])
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                    <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <div class="alert-content">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             @endif
 
@@ -34,23 +35,20 @@
                 @csrf
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <div class="login-field">
-                        @include('partials.icon', ['name' => 'user', 'size' => 18])
-                        <input type="email" class="form-control @error('email') input-error @enderror"
-                               id="email" name="email" value="{{ old('email') }}" placeholder="nama@email.com"
-                               required autofocus autocomplete="username">
-                    </div>
+                    <input type="email" class="form-control @error('email') input-error @enderror"
+                           id="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                           placeholder="Masukkan email">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <div class="login-field">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        <input type="password" class="form-control @error('password') input-error @enderror"
-                               id="password" name="password" placeholder="••••••••"
-                               required autocomplete="current-password">
-                    </div>
+                    <input type="password" class="form-control @error('password') input-error @enderror"
+                           id="password" name="password" required autocomplete="current-password"
+                           placeholder="Masukkan password">
                 </div>
-                <button type="submit" class="btn btn-primary btn-block" style="padding:12px 16px;font-size:14.5px">Masuk</button>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                    Masuk
+                </button>
             </form>
         </div>
     </div>
