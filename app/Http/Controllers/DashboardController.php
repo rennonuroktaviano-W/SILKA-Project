@@ -79,6 +79,12 @@ class DashboardController extends Controller
             ->sortDesc()
             ->values();
 
+        // Rentang tahun lengkap untuk filter: dari tahun data terlama s/d tahun depan
+        // (semua tahun bisa dipilih, bukan hanya yang punya transaksi)
+        $minTahun = min((int) ($tahunTersedia->min() ?? date('Y')), (int) date('Y'));
+        $maxTahun = max((int) date('Y') + 1, $minTahun);
+        $tahunList = collect(range($maxTahun, $minTahun));
+
         // Transaksi terbaru
         $recentTransaksis = Transaksi::with(['kategori', 'coa'])
             ->orderByDesc('tanggal')
@@ -126,7 +132,7 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact(
             'year', 'hariIni', 'bulanIni', 'tahunIni', 'target',
-            'piutang', 'hutang', 'tahunTersedia', 'recentTransaksis',
+            'piutang', 'hutang', 'tahunTersedia', 'tahunList', 'recentTransaksis',
             'tahunMasuk', 'tahunKeluar', 'targetNominal', 'targetPersen',
             'persenPemasukan', 'persenPengeluaran',
             'selectedHasData', 'latestDataYear', 'bulanTren', 'maxTren'

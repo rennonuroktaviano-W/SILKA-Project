@@ -709,37 +709,89 @@ select.form-control { padding: 11px 12px; cursor: pointer; }
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1); transition-delay: var(--d, 0s); will-change: opacity, transform; }
 .reveal.is-visible { opacity: 1; transform: none; }
 
-/* --- Year pills --- */
-.year-pills {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px;
-    background: #fff;
+/* --- Year picker (dropdown filter periode) --- */
+.year-picker { position: relative; display: inline-block; }
+.year-picker-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 16px 8px 9px;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 999px;
     box-shadow: var(--shadow-sm);
-    position: relative;
-    flex-wrap: wrap;
+    font-family: inherit;
+    font-weight: 700; font-size: 13px; color: var(--text-2);
+    cursor: pointer;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
-.year-pills a {
-    position: relative;
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-weight: 700; font-size: 13px;
-    color: var(--text-2);
-    transition: color .18s ease, transform .18s ease;
-    z-index: 1;
+.year-picker-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--brand-1);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, .16);
 }
-.year-pills a:hover { color: var(--brand-2); transform: translateY(-1px); }
-.year-pills a.active {
-    color: #fff;
-    background: var(--brand-grad);
-    box-shadow: 0 6px 16px rgba(79, 70, 229, .4);
+.year-picker-btn:focus-visible { outline: none; box-shadow: var(--ring); }
+.yp-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--brand-grad); color: #fff; flex: none;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, .35);
 }
-.year-pills a svg { transition: transform .2s ease; }
-.year-pills a:hover svg { transform: rotate(-8deg) scale(1.1); }
+.yp-label strong { color: var(--text-1); font-size: 14px; margin-left: 2px; }
+.yp-chevron { display: inline-flex; color: var(--text-3); transition: transform .25s cubic-bezier(.22,1,.36,1); }
+.year-picker.is-open .yp-chevron { transform: rotate(180deg); }
+
+.year-picker-menu {
+    position: absolute; right: 0; top: calc(100% + 10px);
+    min-width: 230px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 48px rgba(15, 23, 42, .16), 0 4px 12px rgba(15, 23, 42, .08);
+    padding: 8px;
+    opacity: 0; visibility: hidden;
+    transform: translateY(-8px) scale(.96);
+    transform-origin: top right;
+    transition: opacity .22s ease, transform .22s cubic-bezier(.22,1,.36,1), visibility 0s linear .22s;
+    z-index: 60;
+}
+.year-picker.is-open .year-picker-menu {
+    opacity: 1; visibility: visible; transform: none;
+    transition-delay: 0s;
+}
+.yp-header {
+    font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--text-3);
+    padding: 8px 12px 6px;
+    border-bottom: 1px dashed var(--border);
+    margin-bottom: 6px;
+}
+.yp-list { overflow-y: auto; max-height: 264px; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+.yp-list::-webkit-scrollbar { width: 6px; }
+.yp-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+.yp-option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border-radius: 12px;
+    font-weight: 700; font-size: 13.5px; color: var(--text-2);
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+}
+.yp-option:hover { background: var(--sky-soft); color: var(--brand-2); transform: translateX(2px); }
+.yp-option.active {
+    background: var(--brand-grad); color: #fff;
+    box-shadow: 0 6px 14px rgba(79, 70, 229, .35);
+}
+.yp-year { font-variant-numeric: tabular-nums; }
+.yp-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--income-1); margin-left: auto; flex: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, .18);
+}
+.yp-badge {
+    margin-left: auto; flex: none;
+    font-size: 10px; font-weight: 800; letter-spacing: .04em;
+    padding: 3px 9px; border-radius: 999px;
+    background: rgba(99, 102, 241, .12); color: var(--brand-2);
+}
+.yp-check { margin-left: auto; display: inline-flex; flex: none; }
 
 /* --- Notice (data kosong) --- */
 .dash-notice {

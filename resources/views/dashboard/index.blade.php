@@ -20,14 +20,33 @@
             <p class="page-sub">Halo {{ auth()->user()->name }}, ini ringkasan keuangan periode {{ $year }}.</p>
         </div>
         <div class="page-actions">
-            <nav class="year-pills" aria-label="Pilih Tahun">
-                @foreach ($tahunTersedia as $tahun)
-                    <a href="{{ route('dashboard', ['year' => $tahun]) }}"
-                       class="{{ $tahun == $year ? 'active' : '' }}">
-                        {{ $tahun }}
-                    </a>
-                @endforeach
-            </nav>
+            <div class="year-picker" id="yearPicker">
+                <button type="button" class="year-picker-btn" id="yearPickerBtn" aria-haspopup="listbox" aria-expanded="false">
+                    <span class="yp-icon">@include('partials.icon', ['name' => 'calendar', 'size' => 15])</span>
+                    <span class="yp-label">Periode <strong>{{ $year }}</strong></span>
+                    <span class="yp-chevron">@include('partials.icon', ['name' => 'chevron-down', 'size' => 14])</span>
+                </button>
+                <div class="year-picker-menu" role="listbox" aria-label="Pilih Periode Tahun">
+                    <div class="yp-header">Pilih Tahun</div>
+                    <div class="yp-list">
+                        @foreach ($tahunList as $tahun)
+                            <a href="{{ route('dashboard', ['year' => $tahun]) }}"
+                               role="option"
+                               aria-selected="{{ $tahun == $year ? 'true' : 'false' }}"
+                               class="yp-option {{ $tahun == $year ? 'active' : '' }}">
+                                <span class="yp-year">{{ $tahun }}</span>
+                                @if ($tahun == $year)
+                                    <span class="yp-check">@include('partials.icon', ['name' => 'check', 'size' => 14])</span>
+                                @elseif ($tahunTersedia->contains($tahun))
+                                    <span class="yp-dot" title="Sudah ada transaksi"></span>
+                                @elseif ($tahun == (int) date('Y'))
+                                    <span class="yp-badge">Berjalan</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -385,11 +404,34 @@
                 });
             }
 
+            // Year picker dropdown
+            var picker = document.getElementById('yearPicker');
+            function closePicker() {
+                if (!picker) return;
+                picker.classList.remove('is-open');
+                document.getElementById('yearPickerBtn').setAttribute('aria-expanded', 'false');
+            }
+            if (picker) {
+                var pickerBtn = document.getElementById('yearPickerBtn');
+                pickerBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var open = picker.classList.toggle('is-open');
+                    pickerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+                document.addEventListener('click', function (e) {
+                    if (!picker.contains(e.target)) closePicker();
+                });
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') closePicker();
+                });
+            }
+
             // Transisi geser saat ganti tahun
-            document.querySelectorAll('.year-pills a').forEach(function (a) {
+            document.querySelectorAll('.yp-option').forEach(function (a) {
                 a.addEventListener('click', function (e) {
-                    if (reduceMotion || a.classList.contains('active')) return;
+                    if (reduceMotion || a.classList.contains('active')) { e.preventDefault(); return; }
                     e.preventDefault();
+                    closePicker();
                     var shell = document.querySelector('.app-shell');
                     if (shell) shell.classList.add('page-exit');
                     setTimeout(function () { window.location.href = a.href; }, 240);
